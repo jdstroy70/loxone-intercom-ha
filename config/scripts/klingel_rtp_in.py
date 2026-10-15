@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-!!! In Zeile 111 ist das Passwort, das für den lokalen Admin der Intercom
+!!! In Zeile 113 ist das Passwort, das für den lokalen Admin der Intercom
 !!! und sip.antisip.com User dasselbe sein muss, einzutragen.
 
 go2rtc exec-Quelle (Primaerprozess) fuer die Loxone-Tuerklingel.
