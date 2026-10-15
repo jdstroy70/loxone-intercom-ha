@@ -1,0 +1,8 @@
+# go2rtc-Konfiguration fuer die Loxone-Intercom Gen1
+# Die IP Adresse der Interkom direkt eintragen - keine <> oder ""
+streams:
+  klingel_audio:
+    # Primaerquelle: haelt den SIP-Anruf, liefert empfangenes Audio.
+    - exec:python3 /config/scripts/klingel_rtp_in.py <IP Adresse der Intercom>
+    # Rueckkanal: Mikrofon-Audio aus dem Browser zurueck zur Klingel.
+    - exec:python3 /config/scripts/klingel_rtp_back.py#backchannel=1#audio=alaw/8000
