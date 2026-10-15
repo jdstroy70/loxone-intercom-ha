@@ -6,6 +6,12 @@ Dieses Setup gibt einer SIP-faehigen Loxone Intercom Gen1 (vor 10/2020) echtes b
 
 Technisch: ein go2rtc-Stream mit zwei kleinen Python-Skripten als Quelle (SIP/RTP-Bruecke), eine `input_boolean`-Helper-Entity als Schalter, zwei Home-Assistant-Automationen (Auflegen + Timeout) und eine Dashboard-Karte mit WebRTC-Wiedergabe.
 
+<img width="976" height="1123" alt="image" src="https://github.com/user-attachments/assets/42550439-661c-48d3-b0f1-b0d92afe55ec" />
+
+<img width="968" height="1119" alt="image" src="https://github.com/user-attachments/assets/bc774134-afa0-480d-b166-1d88212c8fcd" />
+
+
+
 ## Voraussetzungen
 
 - Der Kamera Stream ist bereits per MJPEG vom separaten Kameramodul abgegriffen und lässt sich als Karte darstellen
