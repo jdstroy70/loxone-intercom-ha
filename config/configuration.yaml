@@ -1,0 +1,3 @@
+# Loxone Intercom Gen1 - SIP Integration - Am Ende der configuration.yaml hinzufügen
+shell_command:
+  klingel_hangup: "touch /config/scripts/klingel_hangup"
