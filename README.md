@@ -22,7 +22,8 @@ Technisch: ein go2rtc-Stream mit zwei kleinen Python-Skripten als Quelle (SIP/RT
 - Ab dieser Firmware wird offensichtlich das Passwort des admin Accounts der Intercom im SIP Invite geschickt
 - In der Loxone Config ist nur ein Feld für Passwort (intern und extern)
 - Daraus folgt: der sip.antisip.com User und Admin müssen dasselbe Passwort haben.
-  <img width="423" height="610" alt="image" src="https://github.com/user-attachments/assets/8223d732-4744-41c1-a6e2-5f22cd382fe7" />
+  <img width="423" height="610" alt="image" src="https://github.com/user-attachments/assets/4927699c-c9d3-47b5-9d61-11d88bd0add4" />
+
 
 
 ## Datei-Checkliste
