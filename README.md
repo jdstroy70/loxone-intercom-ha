@@ -1,8 +1,8 @@
-# Loxone Türsprechanlage in Home Assistant
+# Loxone Intercom Gen 1 (vor 10/2020) in Home Assistant
 
 ## Was das ist
 
-Dieses Setup gibt einer SIP-faehigen Loxone-Tuerklingel (Intercom) echtes bidirektionales Gegensprechen direkt in Home Assistant - ohne die Loxone-App. Home Assistant ruft die Klingel per SIP selbst an, empfaengt das Audio und schickt das Mikrofon des Browsers/Handys als Rueckkanal zurueck. Video laeuft weiterhin ueber die normale MJPEG-Kamera-Entity, nicht ueber diesen Pfad.
+Dieses Setup gibt einer SIP-faehigen Loxone Intercom Gen1 (vor 10/2020) echtes bidirektionales Gegensprechen direkt in Home Assistant - ohne die Loxone-App. Home Assistant ruft die Klingel per SIP selbst an, empfaengt das Audio und schickt das Mikrofon des Browsers/Handys als Rueckkanal zurueck. Video laeuft weiterhin ueber die normale MJPEG-Kamera-Entity, nicht ueber diesen Pfad.
 
 Technisch: ein go2rtc-Stream mit zwei kleinen Python-Skripten als Quelle (SIP/RTP-Bruecke), eine `input_boolean`-Helper-Entity als Schalter, zwei Home-Assistant-Automationen (Auflegen + Timeout) und eine Dashboard-Karte mit WebRTC-Wiedergabe.
 
@@ -14,6 +14,12 @@ Technisch: ein go2rtc-Stream mit zwei kleinen Python-Skripten als Quelle (SIP/RT
 - Die IP-Adresse der Klingel im LAN (hier beispielhaft `192.168.178.21`)
 - Das **Admin-Passwort der Klingel** (dasselbe, das auch fuer sip.antisip.com gilt)
 - Etwas Geduld: die Klingel reagiert auf SIP-Grobheiten (zu schnelles, wiederholtes Anwaehlen) empfindlich - das Setup ist bewusst defensiv/langsam gebaut, siehe Abschnitt *Technischer Hintergrund*
+- Firmware Update auf Loxone_TuermodulPlus_GN2MK_DSP_de_V8g7: https://www.loxone.com/dede/wp-content/uploads/sites/2/2019/10/20191001_LoxoneSipUpdate.zip
+
+## Anmerkungen zur Firmware
+- Ab dieser Firmware wird offensichtlich das Passwort des admin Accounts der Intercom im SIP Invite geschickt
+- In der Loxone Config ist nur ein Feld für Passwort (intern und extern)
+- Daraus folgt: der sip.antisip.com User und Admin müssen dasselbe Passwort haben.
 
 ## Datei-Checkliste
 
@@ -28,7 +34,6 @@ Technisch: ein go2rtc-Stream mit zwei kleinen Python-Skripten als Quelle (SIP/RT
 | Dashboard-Abschnitt (Türklingel-View) | Lovelace-Dashboard | Sprechen-/Auflegen-Buttons, Video-/Audio-Karte mit Auflegen-Shortcut |
 | `input_boolean.klingel_gegensprechen` | Helfer (UI oder YAML) | der eigentliche Schalter, den alles andere beobachtet |
 
-Nicht mehr benoetigt (kann geloescht werden, falls noch vorhanden): `klingel_stream_reset.py` und jede `shell_command.klingel_stream_reset`-Referenz - das war ein frueherer, verworfener Ansatz.
 
 ## Installation Schritt fuer Schritt
 
@@ -120,10 +125,11 @@ Diese Lösung basiert auf ausgiebigem Testen mit einer konkreten Loxone-Türspre
 - **Feste RTP-Ports (4000/4001)**: Bewusst nicht dynamisch vergeben. Frühere Versuche mit wechselnden Ports führten zu Instabilität am Gerät. Nicht ohne Grund ändern.
 - **Cooldown von 7 Sekunden**: Nach jedem Gesprächsende (Auflegen) ignoriert das Skript für 7 Sekunden ein neues INVITE. Grund: Die `webrtc-camera`-Karte selbst wartet intern 5 Sekunden, bevor sie ihre WebRTC-Verbindung tatsächlich schließt (hartcodiertes `DISCONNECT_TIMEOUT` im Karten-Code) – der Cooldown muss länger sein als das, sonst überschneiden sich altes Schließen und neues Öffnen.
 - **Schnelles Hin-und-Her-Toggeln**: Wer sehr schnell mehrfach hintereinander Sprechen/Auflegen drückt, kann go2rtc dazu bringen, den laufenden `exec:`-Prozess hart zu beenden (SIGKILL statt eines sauberen Stopps), bevor das Python-Skript sein BYE senden oder aufräumen kann. Das lässt sich in Python grundsätzlich nicht abfangen. Der Cooldown-beim-Start-Fix (COOLDOWN\_FILE wird schon beim Verbindungsaufbau geschrieben, nicht erst beim Auflegen) reduziert das Risiko deutlich, schließt es aber nicht zu 100% aus.
-- **Gelegentliches ca. 3-minütiges "Einfrieren" des Klingel-Geräts**: Wurde einmal beobachtet, ließ sich aber nicht zweifelsfrei auf das eigene Skript zurückführen – vermutlich ein interner Watchdog/Timeout der Klingel-Firmware selbst, unabhängig von unserem Code. Nicht abschließend geklärt. Tritt die Klingel in diesen Zustand, hilft nur Warten (ca. 3 Minuten), danach nimmt sie wieder INVITEs an.
+- **Gelegentliches ca. 3-minütiges "Einfrieren" des Klingel-Geräts**: Wurde ab und zu beobachtet, ließ sich aber nicht zweifelsfrei auf das eigene Skript zurückführen – vermutlich ein interner Watchdog/Timeout der Klingel-Firmware selbst, unabhängig von unserem Code. Nicht abschließend geklärt. Tritt die Klingel in diesen Zustand, hilft nur Warten (ca. 3 Minuten), danach nimmt sie wieder INVITEs an.
 - **MAX\_CALL\_SECS im Skript ist 60, nicht 120**: Die Beschreibung der Auto-Timeout-Automation erwähnt ein Zusammenspiel mit "MAX\_CALL\_SECS=120" im Skript – im tatsächlich verwendeten, finalen Skript steht aber `MAX_CALL_SECS = 60`. Das ist eine kleine Inkonsistenz zwischen Kommentar und Code, die beim Testen nicht aufgefallen ist, weil die 2-Minuten-Automation ohnehin früher greift. Funktional ohne Belang, aber falls man die Timeouts anpassen will: beide Stellen prüfen.
 - **HA Companion App (iOS) – Lockscreen-Artefakt**: Einmalig beobachtet, dass nach Auflegen und Sperren des iPhones noch ein "Play"-Button auf dem Sperrbildschirm erschien, als liefe noch ein Media-Stream. Nicht reproduzierbar gewesen – vermutlich ein Nebeneffekt der App selbst beim Beenden der Audio-Session, kein Fehler in unserem Code.
 - **Kein offizieller SIP-Stack**: `klingel_rtp_in.py` baut SIP-Nachrichten manuell als Strings zusammen (inkl. der proprietären `secHdrA`/`secHdrB`-Authentifizierung von Loxone). Das funktioniert zuverlässig mit der getesteten Firmware-Version, ist aber kein Ersatz für eine echte SIP-Bibliothek und reagiert entsprechend empfindlich auf unerwartetes Serververhalten.
+- **WebRTC Karte ist leider sichtbar und trotz Schalter muted: false in der Companion App immer auf mute. Muss jedes mal unmuted geschaltet werden.
 
 ## Technischer Hintergrund
 
