@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """
+!!! In Zeile 111 ist das Passwort, das für den lokalen Admin der Intercom
+!!! und sip.antisip.com User dasselbe sein muss, einzutragen.
+
 go2rtc exec-Quelle (Primaerprozess) fuer die Loxone-Tuerklingel.
 - Baut den SIP/RTP-Anruf zur Klingel auf (Logik wie in klingel_call.py).
 - Gibt das empfangene Audio (PCMA, 8000 Hz) als "streamendes" WAV auf stdout aus,
@@ -107,7 +110,7 @@ except OSError:
 # sip.antisip.com-PW identisch sein - die Klingel zieht beide synonym heran).
 # Bei Aenderung des Passworts hier einfach den neuen Wert eintragen -
 # kein neuer Mitschnitt mehr noetig (siehe Formel unten).
-KLINGEL_PASSWORT = "by4MHRmxy4HFqta"
+KLINGEL_PASSWORT = "admin und antisip user password"
 
 def make_sec_headers(password):
     # secHdrA: beliebiger zufaelliger String (von der Loxone-App als
