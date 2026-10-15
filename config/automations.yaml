@@ -1,0 +1,45 @@
+# entweder diese beiden Automationen der automations.yaml hinzufügen (HA Restart)
+# oder manuell erzeugen und YAML Code einfügen ohne id (ab alias, jeweils)
+
+- id: '1791975955153'
+  alias: Klingel Gegensprechen - Auflegen
+  triggers:
+  - entity_id: input_boolean.klingel_gegensprechen
+    to: 'off'
+    trigger: state
+  actions:
+  - action: shell_command.klingel_hangup
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 2
+      milliseconds: 0
+  - action: shell_command.klingel_hangup
+- id: '1792013255017'
+  alias: Klingel Gegensprechen - Auto-Timeout nach 2min
+  description: 'Schaltet das Sprechen-Toggle automatisch aus, wenn es laenger als
+    2 Minuten an war. Schliesst dadurch auch die Gegensprechen-Karte im Dashboard
+    (conditional card) und stoesst ueber die bestehende Auflegen-Automation das normale
+    Hangup aus. Ergaenzt sich mit dem MAX_CALL_SECS=120-Sicherheitsnetz direkt im
+    Skript klingel_rtp_in.py: beide greifen nahezu zeitgleich, falls aus irgendeinem
+    Grund niemand manuell auflegt (z.B. Seite/Tab einfach geschlossen, ohne den Button
+    anzutippen).
+
+    '
+  triggers:
+  - trigger: state
+    entity_id:
+    - input_boolean.klingel_gegensprechen
+    to:
+    - 'on'
+    for:
+      hours: 0
+      minutes: 3
+      seconds: 0
+  conditions: []
+  actions:
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.klingel_gegensprechen
+    data: {}
+  mode: single
