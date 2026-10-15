@@ -8,6 +8,8 @@ Technisch: ein go2rtc-Stream mit zwei kleinen Python-Skripten als Quelle (SIP/RT
 
 ## Voraussetzungen
 
+- Der Kamera Stream ist bereits per MJPEG vom separaten Kameramodul abgegriffen und lässt sich als Karte darstellen
+- Klingelsignal wird per pyloxone bereits in HA abgefragt und kann per Automation signalisieren (z.B. Push und Dashboards wechseln)
 - Home Assistant mit dem **go2rtc**-Add-on installiert (liefert die SIP/RTP-Bruecke und den WebRTC-Player)
 - Die **WebRTC Camera**-Karte von AlexxIT (`custom:webrtc-camera`), per HACS installiert
 - Dateizugriff auf `/config` (z. B. File-Editor- oder SSH/Terminal-Add-on)
