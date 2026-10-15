@@ -1,0 +1,137 @@
+type: sections
+theme: Frosted Glass Dark
+max_columns: 1
+path: turklingel
+title: Türklingel
+icon: mdi:bell
+sections:
+  - type: grid
+    cards:
+      - type: vertical-stack
+        cards:
+          - camera_view: live
+            fit_mode: cover
+            type: picture-glance
+            title: Haustüre
+            entities: []
+            camera_image: camera.hausture
+            tap_action:
+              action: none
+            grid_options:
+              columns: full
+          - type: conditional
+            conditions:
+              - entity: input_boolean.klingel_gegensprechen
+                state: 'on'
+            card:
+              type: custom:webrtc-camera
+              title: Gegensprechen
+              muted: false
+              ui: true
+              style: |
+                ha-card {
+                  height: 44px;
+                  min-height: 44px;
+                }
+                .header {
+                  display: none;
+                }
+                .fullscreen, .screenshot, .pictureinpicture, .stream {
+                  display: none;
+                }
+              streams:
+                - url: klingel_audio
+                  mode: webrtc
+                  media: audio,microphone
+      - show_name: true
+        show_icon: true
+        show_state: false
+        type: button
+        grid_options:
+          columns: 3
+          rows: 2
+        theme: Frosted Glass Dark
+        name: Sprechen
+        icon: mdi:microphone
+        color: light-green
+        tap_action:
+          action: perform-action
+          perform_action: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.klingel_gegensprechen
+        hold_action:
+          action: none
+        visibility:
+          - condition: state
+            entity: input_boolean.klingel_gegensprechen
+            state: 'off'
+      - show_name: true
+        show_icon: true
+        show_state: false
+        type: button
+        grid_options:
+          columns: 3
+          rows: 2
+        theme: Frosted Glass Dark
+        name: Auflegen
+        icon: mdi:microphone-off
+        color: red
+        tap_action:
+          action: perform-action
+          perform_action: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.klingel_gegensprechen
+        hold_action:
+          action: none
+        visibility:
+          - condition: state
+            entity: input_boolean.klingel_gegensprechen
+            state: 'on'
+      - show_name: true
+        show_icon: true
+        type: button
+        entity: button.turoffner_homekit
+        icon: mdi:key-variant
+        grid_options:
+          columns: 3
+          rows: 2
+        theme: Frosted Glass Dark
+        tap_action:
+          action: toggle
+        hold_action:
+          action: none
+        name: Haustüre
+      - show_name: true
+        show_icon: true
+        type: button
+        entity: cover.gargentor
+        icon: ''
+        grid_options:
+          columns: 3
+          rows: 2
+        theme: Frosted Glass Dark
+        tap_action:
+          action: toggle
+        hold_action:
+          action: none
+        name: Garage
+        color: red
+        show_state: false
+      - show_name: true
+        show_icon: true
+        type: button
+        entity: light.licht_hausture_hausture_strahler
+        icon: ''
+        grid_options:
+          columns: 3
+          rows: 2
+        theme: Frosted Glass Dark
+        tap_action:
+          action: toggle
+        hold_action:
+          action: none
+        name: Haustüre
+    column_span: 1
+    theme: Frosted Glass Dark
+subview: true
+cards: []
